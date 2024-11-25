@@ -44,6 +44,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Classes\Buyer.cs" />
+    <Compile Include="Classes\Marketplace.cs" />
     <Compile Include="Classes\Product.cs" />
     <Compile Include="Classes\Seller.cs" />
     <Compile Include="Classes\Transaction.cs" />

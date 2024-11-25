@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Internship_4_MarketplaceApp.Enums;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -17,6 +18,23 @@ namespace Internship_4_MarketplaceApp.Classes
             Balance = initialBalance;
             PurchasedProducts = new List<Product>();
             FavoriteProducts = new List<Product>();
+        }
+
+        public void AddToFavorites(Product product)
+        {
+            FavoriteProducts.Add(product);
+        }
+
+        public bool PurchaseProduct(Product product)
+        {
+            if (Balance >= product.Price && product.Status == ProductStatus.ForSale)
+            {
+                Balance -= product.Price;
+                PurchasedProducts.Add(product);
+                product.Status = ProductStatus.Sold;
+                return true;
+            }
+            return false;
         }
     }
 }

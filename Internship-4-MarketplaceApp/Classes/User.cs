@@ -8,8 +8,8 @@ namespace Internship_4_MarketplaceApp.Classes
 {
     public abstract class User
     {
-        protected string Name { get; set; }
-        protected string Email { get; set; }
+        public string Name { get; protected set; }
+        public string Email { get; protected set; }
         protected List<Transaction> Transactions { get; set; }
 
         public User(string name, string email)
