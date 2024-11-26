@@ -9,9 +9,9 @@ namespace Internship_4_MarketplaceApp.Classes
 {
     public class Buyer : User
     {
-        private double Balance { get; set; }
-        private List<Product> PurchasedProducts { get; set; }
-        private List<Product> FavoriteProducts { get; set; }
+        public double Balance { get; private set; }
+        public List<Product> PurchasedProducts { get; private set; }
+        public List<Product> FavoriteProducts { get; private set; }
 
         public Buyer(string name, string email, double initialBalance) : base(name, email)
         {
@@ -25,16 +25,29 @@ namespace Internship_4_MarketplaceApp.Classes
             FavoriteProducts.Add(product);
         }
 
-        public bool PurchaseProduct(Product product)
+        public bool PurchaseProduct(Product product, double finalPrice)
         {
-            if (Balance >= product.Price && product.Status == ProductStatus.ForSale)
+            if (Balance >= finalPrice && product.Status == ProductStatus.ForSale)
             {
-                Balance -= product.Price;
-                PurchasedProducts.Add(product);
+                Balance -= finalPrice;
+                var purchasedProduct = new Product(
+                    product.Name,
+                    product.Description,
+                    finalPrice,
+                    product.Seller,
+                    product.Category
+                );
+                PurchasedProducts.Add(purchasedProduct);
                 product.Status = ProductStatus.Sold;
                 return true;
             }
             return false;
+        }
+
+        public void ReturnProduct(Product product, double buyerCut)
+        {
+            Balance += buyerCut;
+            PurchasedProducts.Remove(product);
         }
     }
 }
