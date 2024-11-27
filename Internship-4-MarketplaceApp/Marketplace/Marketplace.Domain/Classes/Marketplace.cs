@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices.ComTypes;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -79,6 +80,22 @@ namespace Internship_4_MarketplaceApp.Classes
         public List<Product> FilterByCategory(ProductCategory category)
         {
             return Products.Where(p => p.Category == category && p.Status == ProductStatus.ForSale).ToList();
+        }
+
+        public List<Product> GetSellerProducts(Seller seller)
+        {
+            return Products.Where(p => p.Seller == seller).ToList();
+        }
+
+        public List<Product> GetSoldProductsByCategory(Seller seller, ProductCategory category)
+        {
+            return Products.Where(p => p.Seller == seller && p.Category == category && p.Status == ProductStatus.Sold).ToList();
+        }
+
+        public double GetEarningsInPeriod(Seller seller, DateTime startDate, DateTime endDate)
+        {
+            return Transactions.Where(t => t.Seller == seller && t.Product.Status == ProductStatus.Sold
+                && t.Date >= startDate && t.Date <= endDate).Sum(t => t.Amount);
         }
 
         public bool ProcessTransaction(Product product, Buyer buyer, double finalPrice)

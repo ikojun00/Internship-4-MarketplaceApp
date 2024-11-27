@@ -33,6 +33,7 @@ namespace Internship_4_MarketplaceApp
                 Console.WriteLine($"Opis: {product.Description}");
                 Console.WriteLine($"Cijena: {product.Price} eura");
                 Console.WriteLine($"Kategorija: {product.Category}");
+                Console.WriteLine($"Status: {product.Status}");
                 Console.WriteLine(new string('-', 50));
             }
         }
@@ -71,7 +72,9 @@ namespace Internship_4_MarketplaceApp
         }
         private static void DisplayProductsByCategory()
         {
-            var products = marketplace.FilterByCategory(ProductCategory.Electronics);
+            var category = SelectCategory();
+            var products = marketplace.FilterByCategory(category);
+            Console.Clear();
             DisplayProducts(products, "Trenutno nema dostupnih proizvoda za prodaju.");
         }
         private static void DisplayPurchaseHistory(Buyer buyer)
@@ -129,6 +132,7 @@ namespace Internship_4_MarketplaceApp
                         if (Console.ReadLine().ToLower() == "da") continue;
                         break;
                     }
+                    break;
                 }
                 Console.WriteLine($"\nCijena nakon korištenja promo koda");
                 Console.WriteLine($"Naziv: {productToBuy.Name}");
@@ -263,7 +267,6 @@ namespace Internship_4_MarketplaceApp
                 Console.WriteLine("Unesite valjanu cijenu veću od 0.\n");
             }
 
-            Console.WriteLine("\n");
             ProductCategory category = SelectCategory();
 
             marketplace.AddProduct(name, description, price, seller, category);
@@ -272,22 +275,45 @@ namespace Internship_4_MarketplaceApp
 
         private static void DisplaySellerProducts(Seller seller)
         {
-            var products = marketplace.GetAvailableProducts()
-                .Where(p => p.Seller == seller)
-                .ToList();
+            var products = marketplace.GetSellerProducts(seller);
             DisplayProducts(products, "Nemate proizvoda na prodaji.");
         }
 
         private static void DisplaySoldProductsByCategory(Seller seller)
         {
             ProductCategory category = SelectCategory();
-
-            var soldProducts = marketplace.GetAvailableProducts()
-                .Where(p => p.Seller == seller && p.Category == category && p.Status == ProductStatus.Sold)
-                .ToList();
-
-            Console.WriteLine("\n");
+            var soldProducts = marketplace.GetSoldProductsByCategory(seller, category);
+            Console.Clear();
             DisplayProducts(soldProducts, "Nema prodanih proizvoda u odabranoj kategoriji.");
+        }
+
+        private static void DisplayEarningsInTimePeriod(Seller seller)
+        {
+            DateTime startDate, endDate;
+
+            Console.Write("Unesite početni datum (dd.MM.yyyy.): ");
+            if (!DateTime.TryParseExact(Console.ReadLine(), "dd.MM.yyyy.", null, System.Globalization.DateTimeStyles.None, out startDate))
+            {
+                Console.WriteLine("Nevažeći format datuma.");
+                return;
+            }
+
+            Console.Write("Unesite završni datum (dd.MM.yyyy.): ");
+            if (!DateTime.TryParseExact(Console.ReadLine(), "dd.MM.yyyy.", null, System.Globalization.DateTimeStyles.None, out endDate))
+            {
+                Console.WriteLine("Nevažeći format datuma.");
+                return;
+            }
+
+            if(startDate > endDate)
+            {
+                Console.WriteLine("Datum početka ne može biti nakon datuma kraja.");
+                return;
+            }
+
+            var earningsInPeriod = marketplace.GetEarningsInPeriod(seller, startDate, endDate);
+
+            Console.WriteLine($"\nZarada u razdoblju od {startDate:dd.MM.yyyy} do {endDate:dd.MM.yyyy}: {earningsInPeriod} eura");
         }
 
         private static void ShowSellerManagement(User user)
@@ -321,7 +347,7 @@ namespace Internship_4_MarketplaceApp
                             DisplaySoldProductsByCategory(seller);
                             break;
                         case "4":
-                            //DisplayEarningsInTimePeriod(seller);
+                            DisplayEarningsInTimePeriod(seller);
                             break;
                         case "0":
                             Console.WriteLine("Odjava.");
