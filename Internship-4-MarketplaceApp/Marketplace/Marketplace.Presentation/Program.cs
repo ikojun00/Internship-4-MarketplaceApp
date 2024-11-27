@@ -36,6 +36,39 @@ namespace Internship_4_MarketplaceApp
                 Console.WriteLine(new string('-', 50));
             }
         }
+        private static ProductCategory SelectCategory()
+        {
+            ProductCategory category;
+            while (true)
+            {
+                Console.WriteLine("1 - Elektronika");
+                Console.WriteLine("2 - Odjeća i obuća");
+                Console.WriteLine("3 - Knjige");
+                Console.WriteLine("4 - Ostalo");
+                Console.Write("Odaberi kategoriju: ");
+
+                switch (Console.ReadLine())
+                {
+                    case "1":
+                        category = ProductCategory.Electronics;
+                        break;
+                    case "2":
+                        category = ProductCategory.Clothing;
+                        break;
+                    case "3":
+                        category = ProductCategory.Books;
+                        break;
+                    case "4":
+                        category = ProductCategory.Other;
+                        break;
+                    default:
+                        Console.WriteLine("Nepostojeća opcija. Pokušajte ponovno.");
+                        continue;
+                }
+                break;
+            }
+            return category;
+        }
         private static void DisplayProductsByCategory()
         {
             var products = marketplace.FilterByCategory(ProductCategory.Electronics);
@@ -81,12 +114,22 @@ namespace Internship_4_MarketplaceApp
             }
             
             double price = productToBuy.Price;
-            Console.Write("\nŽelite li koristiti promo kod? (da/ne): ");
+            Console.Write("\nŽelite li iskoristiti promo kod? (da/ne): ");
             if (Console.ReadLine().ToLower() == "da")
             {
-                Console.Write("Promo kod: ");
-                string promoCode = Console.ReadLine();
-                price = marketplace.UsePromoCode(productToBuy, promoCode);
+                while(true)
+                {
+                    Console.Write("\nPromo kod: ");
+                    string promoCode = Console.ReadLine();
+                    price = marketplace.UsePromoCode(productToBuy, promoCode);
+                    if(price == productToBuy.Price)
+                    {
+                        Console.WriteLine("\nUneseni promo kod ne vrijedi.");
+                        Console.Write("Želite li iskoristiti drugi promo kod? (da/ne): ");
+                        if (Console.ReadLine().ToLower() == "da") continue;
+                        break;
+                    }
+                }
                 Console.WriteLine($"\nCijena nakon korištenja promo koda");
                 Console.WriteLine($"Naziv: {productToBuy.Name}");
                 Console.WriteLine($"Cijena: {price} eura");
@@ -192,6 +235,61 @@ namespace Internship_4_MarketplaceApp
             }
         }
 
+        public static void AddNewProduct(Seller seller)
+        {
+            string name = "";
+            while (true)
+            {
+                Console.Write("Ime proizvoda: ");
+                name = Console.ReadLine();
+                if (!string.IsNullOrWhiteSpace(name)) break;
+                Console.WriteLine("Ime proizvoda ne može biti prazno.\n");
+            }
+
+            string description = "";
+            while (true)
+            {
+                Console.Write("Opis proizvoda: ");
+                description = Console.ReadLine();
+                if (!string.IsNullOrWhiteSpace(description)) break;
+                Console.WriteLine("Opis proizvoda ne može biti prazan.\n");
+            }
+
+            double price = 0;
+            while (true)
+            {
+                Console.Write("Cijena proizvoda: ");
+                if (double.TryParse(Console.ReadLine(), out price) && price > 0) break;
+                Console.WriteLine("Unesite valjanu cijenu veću od 0.\n");
+            }
+
+            Console.WriteLine("\n");
+            ProductCategory category = SelectCategory();
+
+            marketplace.AddProduct(name, description, price, seller, category);
+            Console.WriteLine("\nProizvod uspješno dodan.");
+        }
+
+        private static void DisplaySellerProducts(Seller seller)
+        {
+            var products = marketplace.GetAvailableProducts()
+                .Where(p => p.Seller == seller)
+                .ToList();
+            DisplayProducts(products, "Nemate proizvoda na prodaji.");
+        }
+
+        private static void DisplaySoldProductsByCategory(Seller seller)
+        {
+            ProductCategory category = SelectCategory();
+
+            var soldProducts = marketplace.GetAvailableProducts()
+                .Where(p => p.Seller == seller && p.Category == category && p.Status == ProductStatus.Sold)
+                .ToList();
+
+            Console.WriteLine("\n");
+            DisplayProducts(soldProducts, "Nema prodanih proizvoda u odabranoj kategoriji.");
+        }
+
         private static void ShowSellerManagement(User user)
         {
             var seller = (Seller)user;
@@ -210,18 +308,17 @@ namespace Internship_4_MarketplaceApp
 
                     Console.Write("\nOdabir: ");
                     string choice = Console.ReadLine();
+                    Console.Clear();
                     switch (choice)
                     {
                         case "1":
-                            Console.Clear();
-                            //AddNewProduct(seller);
+                            AddNewProduct(seller);
                             break;
                         case "2":
-                            Console.Clear();
-                            //DisplaySellerProducts(seller);
+                            DisplaySellerProducts(seller);
                             break;
                         case "3":
-                            //DisplaySoldProductsByCategory(seller);
+                            DisplaySoldProductsByCategory(seller);
                             break;
                         case "4":
                             //DisplayEarningsInTimePeriod(seller);
