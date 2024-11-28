@@ -50,6 +50,10 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Marketplace.Data\Marketplace.Data.csproj">
+      <Project>{4A22A554-B659-413D-8FAC-F3584B860A82}</Project>
+      <Name>Marketplace.Data</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Marketplace.Domain\Marketplace.Domain.csproj">
       <Project>{ce43128c-fbfd-4e47-96a4-a8098754f476}</Project>
       <Name>Marketplace.Domain</Name>
