@@ -3,6 +3,7 @@ using Marketplace.Data.Enums;
 using Marketplace.Domain.Repositories;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -12,6 +13,18 @@ namespace Internship_4_MarketplaceApp
     public class Program
     {
         private static MarketplaceRepository marketplace;
+        private static Dictionary<ProductCategory, string> categoryTranslations = new Dictionary<ProductCategory, string>
+        {
+            { ProductCategory.Electronics, "Elektronika" },
+            { ProductCategory.Clothing, "Odjeća i obuća" },
+            { ProductCategory.Books, "Knjige" },
+            { ProductCategory.Other, "Ostalo" }
+        };
+        private static Dictionary<ProductStatus, string> statusTranslations = new Dictionary<ProductStatus, string>
+        {
+            { ProductStatus.Sold, "Prodano" },
+            { ProductStatus.ForSale, "U prodaji" },
+        };
 
         static void Main(string[] args)
         {
@@ -19,6 +32,50 @@ namespace Internship_4_MarketplaceApp
             marketplace = new MarketplaceRepository(context);
             SeedData();
             ShowMainMenu();
+        }
+        private static void ShowMenu(string[] options, Action<int> handleSelection)
+        {
+            while (true)
+            {
+                Console.Clear();
+                for (int i = 0; i < options.Length; i++) Console.WriteLine($"{i} - {options[i]}");
+                Console.Write("\nOdabir: ");
+
+                if (int.TryParse(Console.ReadLine(), out int choice) && choice >= 0 && choice < options.Length)
+                {
+                    Console.Clear();
+                    if (choice == 0) return;
+                    handleSelection(choice);
+                }
+                else Console.WriteLine("Nepostojeća opcija. Pokušajte ponovno.");
+                
+                Console.Write("\nPritisnite bilo koju tipku za nastavak...");
+                Console.ReadKey();
+                Console.Clear();
+            }
+        }
+        private static DateTime GetValidDate(string prompt)
+        {
+            while (true)
+            {
+                Console.Write(prompt);
+                if (DateTime.TryParseExact(Console.ReadLine(), "dd.MM.yyyy.", null, System.Globalization.DateTimeStyles.None, out DateTime date))
+                {
+                    return date;
+                }
+                Console.WriteLine("Nevažeći format datuma. Pokušajte ponovno.");
+            }
+        }
+
+        private static string GetValidatedString(string prompt, string errorMessage)
+        {
+            while (true)
+            {
+                Console.Write(prompt);
+                string input = Console.ReadLine();
+                if (!string.IsNullOrWhiteSpace(input)) return input;
+                Console.WriteLine(errorMessage);
+            }
         }
         private static void DisplayProducts(List<Product> products, string message)
         {
@@ -34,43 +91,27 @@ namespace Internship_4_MarketplaceApp
                 Console.WriteLine($"Naziv: {product.Name}");
                 Console.WriteLine($"Opis: {product.Description}");
                 Console.WriteLine($"Cijena: {product.Price} eura");
-                Console.WriteLine($"Kategorija: {product.Category}");
-                Console.WriteLine($"Status: {product.Status}");
+                Console.WriteLine($"Kategorija: {categoryTranslations[product.Category]}");
+                Console.WriteLine($"Status: {statusTranslations[product.Status]}");
                 Console.WriteLine(new string('-', 50));
             }
         }
         private static ProductCategory SelectCategory()
         {
-            ProductCategory category;
+            foreach (var value in Enum.GetValues(typeof(ProductCategory)))
+            {
+                Console.WriteLine($"{(int)value} - {categoryTranslations[(ProductCategory)value]}");
+            }
             while (true)
             {
-                Console.WriteLine("1 - Elektronika");
-                Console.WriteLine("2 - Odjeća i obuća");
-                Console.WriteLine("3 - Knjige");
-                Console.WriteLine("4 - Ostalo");
                 Console.Write("Odaberi kategoriju: ");
-
-                switch (Console.ReadLine())
+                if (int.TryParse(Console.ReadLine(), out int selected) &&
+                    Enum.IsDefined(typeof(ProductCategory), selected))
                 {
-                    case "1":
-                        category = ProductCategory.Electronics;
-                        break;
-                    case "2":
-                        category = ProductCategory.Clothing;
-                        break;
-                    case "3":
-                        category = ProductCategory.Books;
-                        break;
-                    case "4":
-                        category = ProductCategory.Other;
-                        break;
-                    default:
-                        Console.WriteLine("Nepostojeća opcija. Pokušajte ponovno.");
-                        continue;
+                    return (ProductCategory)selected;
                 }
-                break;
+                Console.WriteLine("Nepostojeća opcija. Pokušajte ponovno.");
             }
-            return category;
         }
         private static void DisplayProductsByCategory()
         {
@@ -110,13 +151,13 @@ namespace Internship_4_MarketplaceApp
             Console.WriteLine($"\nOdabrani proizvod");
             Console.WriteLine($"Naziv: {productToBuy.Name}");
             Console.WriteLine($"Cijena: {productToBuy.Price} eura");
-            /*
+            
             Console.Write("\nŽelite li dodati u favorite? (da/ne): ");
             if (Console.ReadLine().ToLower() == "da")
             {
-                buyer.AddToFavorites(productToBuy);
+                marketplace.AddToFavorites(buyer, productToBuy);
                 Console.WriteLine("Proizvod dodan u favorite.");
-            }*/
+            }
 
             double price = productToBuy.Price;
             Console.Write("\nŽelite li iskoristiti promo kod? (da/ne): ");
@@ -184,82 +225,35 @@ namespace Internship_4_MarketplaceApp
         private static void ShowBuyerManagement(User user)
         {
             var buyer = (Buyer)user;
-            Console.Clear();
-            while (true)
+            string[] buyerOptions = {
+                "Odjava",
+                "Pregled svih proizvoda na prodaji",
+                "Pregled proizvoda po kategoriji",
+                "Pregled kupljenih proizvoda",
+                "Pregled omiljenih proizvoda",
+                "Kupnja proizvoda",
+                "Povrat kupljenog proizvoda"
+            };
+
+            ShowMenu(buyerOptions, choice =>
             {
-                try
+                switch (choice)
                 {
-                    Console.WriteLine($"Dobrodošli, {buyer.Name}\n");
-                    Console.WriteLine($"Imate: {buyer.Balance} eura\n");
-                    Console.WriteLine("1 - Pregled svih proizvoda na prodaji");
-                    Console.WriteLine("2 - Pregled proizvoda po kategoriji");
-                    Console.WriteLine("3 - Pregled kupljenih proizvoda");
-                    Console.WriteLine("4 - Pregled omiljenih proizvoda");
-                    Console.WriteLine("5 - Kupnja proizvoda");
-                    Console.WriteLine("6 - Povrat kupljenog proizvoda");
-                    Console.WriteLine("0 - Odjava");
-
-                    Console.Write("\nOdabir: ");
-                    string choice = Console.ReadLine();
-                    Console.Clear();
-                    switch (choice)
-                    {
-                        case "1":
-                            DisplayAvailableProducts();
-                            break;
-                        case "2":
-                            DisplayProductsByCategory();
-                            break;
-                        case "3":
-                            DisplayPurchaseHistory(buyer);
-                            break;
-                        case "4":
-                            DisplayFavoriteProducts(buyer);
-                            break;
-                        case "5":
-                            PurchaseProduct(buyer);
-                            break;
-                        case "6":
-                            ReturnProduct(buyer);
-                            break;
-                        case "0":
-                            Console.WriteLine("Odjava.");
-                            return;
-                        default:
-                            Console.WriteLine("Nepostojeća opcija. Pokušajte ponovno.");
-                            break;
-                    }
+                    case 1: DisplayAvailableProducts(); break;
+                    case 2: DisplayProductsByCategory(); break;
+                    case 3: DisplayPurchaseHistory(buyer); break;
+                    case 4: DisplayFavoriteProducts(buyer); break;
+                    case 5: PurchaseProduct(buyer); break;
+                    case 6: ReturnProduct(buyer); break;
                 }
-                catch (Exception e)
-                {
-                    Console.WriteLine("\n" + e.Message);
-                }
-
-                Console.Write("\nPritisnite bilo koju tipku za nastavak...");
-                Console.ReadKey();
-                Console.Clear();
-            }
+            });
         }
+
 
         public static void AddNewProduct(Seller seller)
         {
-            string name = "";
-            while (true)
-            {
-                Console.Write("Ime proizvoda: ");
-                name = Console.ReadLine();
-                if (!string.IsNullOrWhiteSpace(name)) break;
-                Console.WriteLine("Ime proizvoda ne može biti prazno.\n");
-            }
-
-            string description = "";
-            while (true)
-            {
-                Console.Write("Opis proizvoda: ");
-                description = Console.ReadLine();
-                if (!string.IsNullOrWhiteSpace(description)) break;
-                Console.WriteLine("Opis proizvoda ne može biti prazan.\n");
-            }
+            string name = GetValidatedString("Ime proizvoda: ", "Ime proizvoda ne može biti prazno.\n");
+            string description = GetValidatedString("Opis proizvoda: ", "Opis proizvoda ne može biti prazan.\n");
 
             double price = 0;
             while (true)
@@ -292,25 +286,12 @@ namespace Internship_4_MarketplaceApp
         private static void DisplayEarningsInTimePeriod(Seller seller)
         {
             DateTime startDate, endDate;
-
-            Console.Write("Unesite početni datum (dd.MM.yyyy.): ");
-            if (!DateTime.TryParseExact(Console.ReadLine(), "dd.MM.yyyy.", null, System.Globalization.DateTimeStyles.None, out startDate))
+            while(true)
             {
-                Console.WriteLine("Nevažeći format datuma.");
-                return;
-            }
-
-            Console.Write("Unesite završni datum (dd.MM.yyyy.): ");
-            if (!DateTime.TryParseExact(Console.ReadLine(), "dd.MM.yyyy.", null, System.Globalization.DateTimeStyles.None, out endDate))
-            {
-                Console.WriteLine("Nevažeći format datuma.");
-                return;
-            }
-
-            if (startDate > endDate)
-            {
+                startDate = GetValidDate("Unesite početni datum (dd.MM.yyyy.): ");
+                endDate = GetValidDate("Unesite završni datum (dd.MM.yyyy.): ");
+                if (startDate <= endDate) break;
                 Console.WriteLine("Datum početka ne može biti nakon datuma kraja.");
-                return;
             }
 
             var earningsInPeriod = marketplace.GetEarningsInPeriod(seller, startDate, endDate);
@@ -321,54 +302,28 @@ namespace Internship_4_MarketplaceApp
         private static void ShowSellerManagement(User user)
         {
             var seller = (Seller)user;
-            Console.Clear();
-            while (true)
+            Console.WriteLine($"Dobrodošli, {seller.Name}\n");
+            Console.WriteLine($"Vaša zarada: {seller.TotalEarnings} eura\n");
+            string[] sellerOptions = {
+                "Odjava",
+                "Dodaj novi proizvod",
+                "Pregled vlastitih proizvoda",
+                "Pregled prodanih proizvoda po kategoriji",
+                "Pregled zarade u vremenskom razdoblju",
+            };
+
+            ShowMenu(sellerOptions, choice =>
             {
-                try
+                switch (choice)
                 {
-                    Console.WriteLine($"Dobrodošli, {seller.Name}\n");
-                    Console.WriteLine($"Vaša zarada: {seller.TotalEarnings} eura\n");
-                    Console.WriteLine("1 - Dodaj novi proizvod");
-                    Console.WriteLine("2 - Pregled vlastitih proizvoda");
-                    Console.WriteLine("3 - Pregled prodanih proizvoda po kategoriji");
-                    Console.WriteLine("4 - Pregled zarade u vremenskom razdoblju");
-                    Console.WriteLine("0 - Odjava");
-
-                    Console.Write("\nOdabir: ");
-                    string choice = Console.ReadLine();
-                    Console.Clear();
-                    switch (choice)
-                    {
-                        case "1":
-                            AddNewProduct(seller);
-                            break;
-                        case "2":
-                            DisplaySellerProducts(seller);
-                            break;
-                        case "3":
-                            DisplaySoldProductsByCategory(seller);
-                            break;
-                        case "4":
-                            DisplayEarningsInTimePeriod(seller);
-                            break;
-                        case "0":
-                            Console.WriteLine("Odjava.");
-                            return;
-                        default:
-                            Console.WriteLine("Nepostojeća opcija. Pokušajte ponovno.");
-                            break;
-                    }
+                    case 1: AddNewProduct(seller); break;
+                    case 2: DisplaySellerProducts(seller); break;
+                    case 3: DisplaySoldProductsByCategory(seller); break;
+                    case 4: DisplayEarningsInTimePeriod(seller); break;
                 }
-                catch (Exception e)
-                {
-                    Console.WriteLine("\n" + e.Message);
-                }
-
-                Console.Write("\nPritisnite bilo koju tipku za nastavak...");
-                Console.ReadKey();
-                Console.Clear();
-            }
+            });
         }
+
         private static void ShowUserManagement(User user)
         {
             if (user is Buyer)
@@ -434,14 +389,20 @@ namespace Internship_4_MarketplaceApp
         private static void RegisterUserInterface()
         {
             Console.Clear();
-            string name = "";
+            string name = GetValidatedString("Ime: ", "Ime korisnika ne može biti prazno.\n");
+            string email = "";
             while (true)
             {
-                Console.Write("Ime: ");
-                name = Console.ReadLine();
-                if (string.IsNullOrWhiteSpace(name))
+                Console.Write("Email: ");
+                email = Console.ReadLine();
+                if (!marketplace.IsEmailValid(email))
                 {
-                    Console.WriteLine("Ime korisnika ne može biti prazno.\n");
+                    Console.WriteLine("Email je nevažeći.\n");
+                    continue;
+                }
+                if (marketplace.EmailExists(email))
+                {
+                    Console.WriteLine("Email se već koristi.\n");
                     continue;
                 }
                 break;
@@ -449,37 +410,31 @@ namespace Internship_4_MarketplaceApp
 
             while (true)
             {
-                Console.Write("Email: ");
-                string email = Console.ReadLine();
-                if (string.IsNullOrWhiteSpace(email))
-                {
-                    Console.WriteLine("Email korisnika ne može biti prazno.\n");
-                    continue;
-                }
-                try
-                {
-                    Console.Write("Pritisnite 'k' za registraciju kao kupac ili 'p' kao prodavač: ");
-                    string choice = Console.ReadLine().ToLower();
+                Console.Write("Pritisnite 'k' za registraciju kao kupac ili 'p' kao prodavač: ");
+                string choice = Console.ReadLine().ToLower();
 
-                    switch (choice)
-                    {
-                        case "k":
-                            marketplace.RegisterBuyer(name, email, 1000);
-                            Console.WriteLine("\nKupac uspješno registriran!");
-                            return;
-                        case "p":
-                            marketplace.RegisterSeller(name, email);
-                            Console.WriteLine("\nProdavač uspješno registriran!");
-                            return;
-                        default:
-                            Console.WriteLine("Nevažeći odabir. Molimo odaberite 'k' ili 'p'.");
-                            break;
-                    }
-                }
-                catch (InvalidOperationException ex)
+                switch (choice)
                 {
-                    Console.WriteLine(ex.Message);
+                    case "k":
+                        double balance = 0;
+                        while (true)
+                        {
+                            Console.Write("Cijena proizvoda: ");
+                            if (double.TryParse(Console.ReadLine(), out balance) && balance > 0) break;
+                            Console.WriteLine("Unesite valjanu cijenu veću od 0.\n");
+                        }
+                        marketplace.RegisterBuyer(name, email, balance);
+                        Console.WriteLine("\nKupac uspješno registriran!");
+                        break;
+                    case "p":
+                        marketplace.RegisterSeller(name, email);
+                        Console.WriteLine("\nProdavač uspješno registriran!");
+                        break;
+                    default:
+                        Console.WriteLine("Nevažeći odabir. Molimo odaberite 'k' ili 'p'.");
+                        continue;
                 }
+                break;
             }
         }
     }

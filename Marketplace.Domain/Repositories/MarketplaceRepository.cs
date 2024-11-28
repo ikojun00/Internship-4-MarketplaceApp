@@ -13,6 +13,7 @@ namespace Marketplace.Domain.Repositories
         private readonly MarketplaceContext _context;
         private readonly BuyerRepository _buyerRepository;
         private readonly SellerRepository _sellerRepository;
+        private readonly UserRepository _userRepository;
         private const double CommissionRate = 0.05;
 
         public MarketplaceRepository(MarketplaceContext context)
@@ -20,6 +21,7 @@ namespace Marketplace.Domain.Repositories
             _context = context;
             _buyerRepository = new BuyerRepository(context);
             _sellerRepository = new SellerRepository(context);
+            _userRepository = new UserRepository(context);
         }
         public User LoginUser(string name, string email)
         {
@@ -28,8 +30,6 @@ namespace Marketplace.Domain.Repositories
 
         public Buyer RegisterBuyer(string name, string email, double initialBalance)
         {
-            if (_context.Users.Exists(u => u.Email == email))
-                throw new InvalidOperationException($"Postoji korisnik s email-om '{email}'. Izaberite neki drugi email.\n");
             var buyer = new Buyer(name, email, initialBalance);
             _context.Users.Add(buyer);
             return buyer;
@@ -42,6 +42,20 @@ namespace Marketplace.Domain.Repositories
             var seller = new Seller(name, email);
             _context.Users.Add(seller);
             return seller;
+        }
+        public void AddToFavorites(Buyer buyer, Product product)
+        {
+            _buyerRepository.AddToFavorites(buyer, product);
+        }
+
+        public bool IsEmailValid(string email)
+        {
+            return _userRepository.IsEmailValid(email);
+        }
+
+        public bool EmailExists(string email)
+        {
+            return (_context.Users.Exists(u => u.Email == email)) ? true : false;
         }
 
         public double UsePromoCode(Product product, string promoCode)

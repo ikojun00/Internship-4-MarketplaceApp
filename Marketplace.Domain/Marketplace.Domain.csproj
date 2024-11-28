@@ -48,6 +48,7 @@
     <Compile Include="Repositories\BuyerRepository.cs" />
     <Compile Include="Repositories\MarketplaceRepository.cs" />
     <Compile Include="Repositories\SellerRepository.cs" />
+    <Compile Include="Repositories\UserRepository.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
