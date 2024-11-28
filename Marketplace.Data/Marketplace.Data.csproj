@@ -44,7 +44,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Entities\Buyer.cs" />
-    <Compile Include="Entities\Marketplace.cs" />
+    <Compile Include="Entities\MarketplaceContext.cs" />
     <Compile Include="Entities\Product.cs" />
     <Compile Include="Entities\Seller.cs" />
     <Compile Include="Entities\Transaction.cs" />

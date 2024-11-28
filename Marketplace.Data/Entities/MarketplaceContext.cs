@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Marketplace.Data.Enums;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,14 +7,14 @@ using System.Threading.Tasks;
 
 namespace Marketplace.Data.Entities
 {
-    public class Marketplace
+    public class MarketplaceContext
     {
         public List<User> Users { get; set; }
         public List<Product> Products { get; set; }
         public List<Transaction> Transactions { get; set; }
         public Dictionary<string, (ProductCategory Category, DateTime ExpiryDate, double DiscountPercentage)> PromoCodes { get; set; }
 
-        public Marketplace()
+        public MarketplaceContext()
         {
             Users = new List<User>();
             Products = new List<Product>();

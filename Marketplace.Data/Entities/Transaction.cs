@@ -25,3 +25,4 @@ namespace Marketplace.Data.Entities
             Amount = amount;
         }
     }
+}
