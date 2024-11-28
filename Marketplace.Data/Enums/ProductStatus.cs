@@ -4,12 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Internship_4_MarketplaceApp
+namespace Marketplace.Data.Enums
 {
-    internal class Program
+    public enum ProductStatus
     {
-        static void Main(string[] args)
-        {
-        }
+        ForSale,
+        Sold
     }
 }

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Internship_4_MarketplaceApp
+namespace Marketplace.Domain
 {
     internal class Program
     {

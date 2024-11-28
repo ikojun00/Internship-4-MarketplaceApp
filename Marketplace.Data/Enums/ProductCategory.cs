@@ -4,12 +4,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Internship_4_MarketplaceApp
+namespace Marketplace.Data.Enums
 {
-    internal class Program
+    public enum ProductCategory
     {
-        static void Main(string[] args)
-        {
-        }
+        Electronics,
+        Clothing,
+        Books,
+        Other
     }
 }
