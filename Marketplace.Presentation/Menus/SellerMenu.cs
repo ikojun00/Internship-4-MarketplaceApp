@@ -22,8 +22,10 @@ namespace Internship_4_MarketplaceApp.Menus
 
         public void ShowSellerMenu()
         {
-            Console.WriteLine($"Dobrodošli, {_seller.Name}\n");
-            Console.WriteLine($"Vaša zarada: {_seller.TotalEarnings} eura\n");
+            string[] sellerInfo = {
+                $"Dobrodošli, {_seller.Name}\n",
+                $"Vaša zarada: {_seller.TotalEarnings} eura\n"
+            };
             string[] sellerOptions = {
                 "Odjava",
                 "Dodaj novi proizvod",
@@ -32,7 +34,7 @@ namespace Internship_4_MarketplaceApp.Menus
                 "Pregled zarade u vremenskom razdoblju",
             };
 
-            Helper.ShowMenu(sellerOptions, choice =>
+            Helper.ShowMenu(sellerInfo, sellerOptions, choice =>
             {
                 switch (choice)
                 {
@@ -56,7 +58,7 @@ namespace Internship_4_MarketplaceApp.Menus
                 if (double.TryParse(Console.ReadLine(), out price) && price > 0) break;
                 Console.WriteLine("Unesite valjanu cijenu veću od 0.\n");
             }
-
+            Console.WriteLine();
             ProductCategory category = Helper.SelectCategory();
 
             _marketplace.AddProduct(name, description, price, _seller, category);

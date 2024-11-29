@@ -21,11 +21,11 @@ namespace Internship_4_MarketplaceApp
             { ProductStatus.ForSale, "U prodaji" },
         };
 
-        public static void ShowMenu(string[] options, Action<int> handleSelection)
+        public static void ShowMenu(string[] info, string[] options, Action<int> handleSelection)
         {
             while (true)
             {
-                Console.Clear();
+                for (int i = 0; i < info.Length; i++) Console.WriteLine(info[i]);
                 for (int i = 0; i < options.Length; i++) Console.WriteLine($"{i} - {options[i]}");
                 Console.Write("\nOdabir: ");
 

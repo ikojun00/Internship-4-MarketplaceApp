@@ -26,7 +26,7 @@ namespace Internship_4_MarketplaceApp.Menus
                 "Registracija",
             };
 
-            Helper.ShowMenu(options, choice =>
+            Helper.ShowMenu(Array.Empty<string>(), options, choice =>
             {
                 switch (choice)
                 {

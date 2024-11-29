@@ -21,8 +21,10 @@ namespace Internship_4_MarketplaceApp.Menus
 
         public void ShowBuyerMenu()
         {
-            Console.WriteLine($"Dobrodošli, {_buyer.Name}\n");
-            Console.WriteLine($"Stanje računa: {_buyer.Balance} eura\n");
+            string[] buyerInfo = {
+                $"Dobrodošli, {_buyer.Name}\n",
+                $"Stanje računa: {_buyer.Balance} eura\n"
+            };
             string[] buyerOptions = {
                 "Odjava",
                 "Pregled svih proizvoda na prodaji",
@@ -33,7 +35,7 @@ namespace Internship_4_MarketplaceApp.Menus
                 "Povrat kupljenog proizvoda"
             };
 
-            Helper.ShowMenu(buyerOptions, choice =>
+            Helper.ShowMenu(buyerInfo, buyerOptions, choice =>
             {
                 switch (choice)
                 {
