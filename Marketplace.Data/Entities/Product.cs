@@ -17,9 +17,9 @@ namespace Marketplace.Data.Entities
         public Seller Seller { get; private set; }
         public ProductCategory Category { get; private set; }
 
-        public Product(string name, string description, double price, Seller seller, ProductCategory category)
+        public Product(string name, string description, double price, Seller seller, ProductCategory category, string id = null)
         {
-            Id = Guid.NewGuid().ToString();
+            Id = id ?? Guid.NewGuid().ToString();
             Name = name;
             Description = description;
             Price = price;

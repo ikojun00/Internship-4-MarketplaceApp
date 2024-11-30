@@ -26,11 +26,11 @@ namespace Internship_4_MarketplaceApp
             var mainMenu = new MainMenu(marketplace);
             mainMenu.ShowMainMenu();
         }
-
+        // nisam naša način da pribacim ovo u Marketplace.Data jer koristim funkcije iz Marketplace.Domain
         private static void SeedData()
         {
             var seller = marketplace.RegisterSeller("Ivo", "ivo@gmail.com");
-            var buyer = marketplace.RegisterBuyer("Ante", "ante@gmail.com", 1000);
+            var buyer = marketplace.RegisterBuyer("Ante", "ante@gmail.com", 500);
 
             marketplace.AddProduct("iPhone 14", "Najnoviji iPhone model", 799.99, seller, ProductCategory.Electronics);
             marketplace.AddProduct("Tenisice za trčanje", "Nike tenisice za trčanje", 69.99, seller, ProductCategory.Clothing);

@@ -13,7 +13,7 @@ namespace Marketplace.Data.Entities
         public Buyer Buyer { get; private set; }
         public Seller Seller { get; private set; }
         public DateTime Date { get; private set; }
-        public double Amount { get; private set; }
+        public double Amount { get; set; }
 
         public Transaction(Product product, Buyer buyer, Seller seller, double amount)
         {

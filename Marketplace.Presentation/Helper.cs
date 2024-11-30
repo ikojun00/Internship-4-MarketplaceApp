@@ -21,28 +21,6 @@ namespace Internship_4_MarketplaceApp
             { ProductStatus.ForSale, "U prodaji" },
         };
 
-        public static void ShowMenu(string[] info, string[] options, Action<int> handleSelection)
-        {
-            while (true)
-            {
-                for (int i = 0; i < info.Length; i++) Console.WriteLine(info[i]);
-                for (int i = 0; i < options.Length; i++) Console.WriteLine($"{i} - {options[i]}");
-                Console.Write("\nOdabir: ");
-
-                if (int.TryParse(Console.ReadLine(), out int choice) && choice >= 0 && choice < options.Length)
-                {
-                    Console.Clear();
-                    if (choice == 0) return;
-                    handleSelection(choice);
-                }
-                else Console.WriteLine("Nepostojeća opcija. Pokušajte ponovno.");
-
-                Console.Write("\nPritisnite bilo koju tipku za nastavak...");
-                Console.ReadKey();
-                Console.Clear();
-            }
-        }
-
         public static DateTime GetValidDate(string prompt)
         {
             while (true)

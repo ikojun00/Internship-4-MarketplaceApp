@@ -20,20 +20,31 @@ namespace Internship_4_MarketplaceApp.Menus
 
         public void ShowMainMenu()
         {
-            string[] options = {
-                "Izlaz",
-                "Prijava",
-                "Registracija",
-            };
-
-            Helper.ShowMenu(Array.Empty<string>(), options, choice =>
+            while (true)
             {
+                Console.WriteLine("0 - Izlaz");
+                Console.WriteLine("1 - Prijava");
+                Console.WriteLine("2 - Registracija");
+                Console.Write("\nOdabir: ");
+                string choice = Console.ReadLine();
                 switch (choice)
                 {
-                    case 1: LoginUserInterface(); break;
-                    case 2: RegisterUserInterface(); break;
+                    case "0":
+                        return;
+                    case "1":
+                        LoginUserInterface();
+                        break;
+                    case "2":
+                        RegisterUserInterface();
+                        break;
+                    default:
+                        Console.WriteLine("Nepostojeća opcija. Pokušajte ponovno.");
+                        break;
                 }
-            });
+                Console.Write("\nPritisnite bilo koju tipku za nastavak...");
+                Console.ReadKey();
+                Console.Clear();
+            }
         }
 
         private void LoginUserInterface()

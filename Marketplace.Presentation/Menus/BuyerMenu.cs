@@ -21,32 +21,53 @@ namespace Internship_4_MarketplaceApp.Menus
 
         public void ShowBuyerMenu()
         {
-            string[] buyerInfo = {
-                $"Dobrodošli, {_buyer.Name}\n",
-                $"Stanje računa: {_buyer.Balance} eura\n"
-            };
-            string[] buyerOptions = {
-                "Odjava",
-                "Pregled svih proizvoda na prodaji",
-                "Pregled proizvoda po kategoriji",
-                "Pregled kupljenih proizvoda",
-                "Pregled omiljenih proizvoda",
-                "Kupnja proizvoda",
-                "Povrat kupljenog proizvoda"
-            };
-
-            Helper.ShowMenu(buyerInfo, buyerOptions, choice =>
+            Console.Clear();
+            while (true)
             {
+                Console.WriteLine($"Dobrodošli, {_buyer.Name}\n");
+                Console.WriteLine($"Imate: {_buyer.Balance} eura\n");
+                Console.WriteLine("0 - Odjava");
+                Console.WriteLine("1 - Pregled svih proizvoda na prodaji");
+                Console.WriteLine("2 - Pregled proizvoda po kategoriji");
+                Console.WriteLine("3 - Pregled kupljenih proizvoda");
+                Console.WriteLine("4 - Pregled omiljenih proizvoda");
+                Console.WriteLine("5 - Kupnja proizvoda");
+                Console.WriteLine("6 - Povrat kupljenog proizvoda");
+                Console.Write("\nOdabir: ");
+                string choice = Console.ReadLine();
+                Console.Clear();
                 switch (choice)
                 {
-                    case 1: DisplayAvailableProducts(); break;
-                    case 2: DisplayProductsByCategory(); break;
-                    case 3: DisplayPurchaseHistory(); break;
-                    case 4: DisplayFavoriteProducts(); break;
-                    case 5: PurchaseProduct(); break;
-                    case 6: ReturnProduct(); break;
+                    case "0":
+                        Console.WriteLine("Odjava.");
+                        return;
+                    case "1":
+                        DisplayAvailableProducts();
+                        break;
+                    case "2":
+                        DisplayProductsByCategory();
+                        break;
+                    case "3":
+                        DisplayPurchaseHistory();
+                        break;
+                    case "4":
+                        DisplayFavoriteProducts();
+                        break;
+                    case "5":
+                        PurchaseProduct();
+                        break;
+                    case "6":
+                        ReturnProduct();
+                        break;
+                    default:
+                        Console.WriteLine("Nepostojeća opcija. Pokušajte ponovno.");
+                        break;
                 }
-            });
+                
+                Console.Write("\nPritisnite bilo koju tipku za nastavak...");
+                Console.ReadKey();
+                Console.Clear();
+            }
         }
 
         private void DisplayAvailableProducts()

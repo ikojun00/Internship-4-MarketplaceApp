@@ -22,28 +22,44 @@ namespace Internship_4_MarketplaceApp.Menus
 
         public void ShowSellerMenu()
         {
-            string[] sellerInfo = {
-                $"Dobrodošli, {_seller.Name}\n",
-                $"Vaša zarada: {_seller.TotalEarnings} eura\n"
-            };
-            string[] sellerOptions = {
-                "Odjava",
-                "Dodaj novi proizvod",
-                "Pregled vlastitih proizvoda",
-                "Pregled prodanih proizvoda po kategoriji",
-                "Pregled zarade u vremenskom razdoblju",
-            };
-
-            Helper.ShowMenu(sellerInfo, sellerOptions, choice =>
+            Console.Clear();
+            while (true)
             {
+                Console.WriteLine($"Dobrodošli, {_seller.Name}\n");
+                Console.WriteLine($"Vaša zarada: {_seller.TotalEarnings} eura\n");
+                Console.WriteLine("0 - Odjava");
+                Console.WriteLine("1 - Dodaj novi proizvod");
+                Console.WriteLine("2 - Pregled vlastitih proizvoda");
+                Console.WriteLine("3 - Pregled prodanih proizvoda po kategoriji");
+                Console.WriteLine("4 - Pregled zarade u vremenskom razdoblju");
+                Console.Write("\nOdabir: ");
+                string choice = Console.ReadLine();
+                Console.Clear();
                 switch (choice)
                 {
-                    case 1: AddNewProduct(); break;
-                    case 2: DisplaySellerProducts(); break;
-                    case 3: DisplaySoldProductsByCategory(); break;
-                    case 4: DisplayEarningsInTimePeriod(); break;
+                    case "0":
+                        Console.WriteLine("Odjava.");
+                        return;
+                    case "1":
+                        AddNewProduct();
+                        break;
+                    case "2":
+                        DisplaySellerProducts();
+                        break;
+                    case "3":
+                        DisplaySoldProductsByCategory();
+                        break;
+                    case "4":
+                        DisplayEarningsInTimePeriod();
+                        break;
+                    default:
+                        Console.WriteLine("Nepostojeća opcija. Pokušajte ponovno.");
+                        break;
                 }
-            });
+                Console.Write("\nPritisnite bilo koju tipku za nastavak...");
+                Console.ReadKey();
+                Console.Clear();
+            }
         }
 
         private void AddNewProduct()

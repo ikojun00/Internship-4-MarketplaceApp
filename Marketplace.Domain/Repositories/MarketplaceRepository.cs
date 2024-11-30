@@ -37,8 +37,6 @@ namespace Marketplace.Domain.Repositories
 
         public Seller RegisterSeller(string name, string email)
         {
-            if (_context.Users.Exists(u => u.Email == email))
-                throw new InvalidOperationException($"Postoji korisnik s email-om '{email}'. Izaberite neki drugi email.\n");
             var seller = new Seller(name, email);
             _context.Users.Add(seller);
             return seller;
@@ -105,8 +103,8 @@ namespace Marketplace.Domain.Repositories
 
         public double GetEarningsInPeriod(Seller seller, DateTime startDate, DateTime endDate)
         {
-            return _context.Transactions.Where(t => t.Seller == seller && t.Product.Status == ProductStatus.Sold
-                && t.Date >= startDate && t.Date <= endDate).Sum(t => t.Amount);
+            return _context.Transactions.Where(t => t.Seller == seller && t.Date >= startDate 
+            && t.Date <= endDate).Sum(t => t.Amount - t.Amount * CommissionRate);
         }
 
         public bool ProcessTransaction(Product product, Buyer buyer, double finalPrice)
@@ -130,9 +128,8 @@ namespace Marketplace.Domain.Repositories
             if (transaction != null)
             {
                 var buyerCut = transaction.Amount * 0.8;
-                var sellerCut = transaction.Amount * 0.85;
                 _buyerRepository.ReturnProduct(transaction.Buyer, product, buyerCut);
-                _sellerRepository.AddEarnings(transaction.Seller, -sellerCut);
+                _sellerRepository.AddEarnings(transaction.Seller, -buyerCut);
                 realProduct.Status = ProductStatus.ForSale;
                 _context.Transactions.Remove(transaction);
                 return true;

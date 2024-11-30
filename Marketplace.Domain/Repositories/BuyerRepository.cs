@@ -21,7 +21,9 @@ namespace Marketplace.Domain.Repositories
         {
             buyer.FavoriteProducts.Add(product);
         }
-
+        // razlog stvaranja novog produkta je korištenje promo koda
+        // želim sačuvati jeftiniju i regularnu cijenu predmeta
+        // oba ta predmeta imaju isti id
         public bool PurchaseProduct(Buyer buyer, Product product, double finalPrice)
         {
             if (buyer.Balance >= finalPrice && product.Status == ProductStatus.ForSale)
@@ -32,7 +34,8 @@ namespace Marketplace.Domain.Repositories
                     product.Description,
                     finalPrice,
                     product.Seller,
-                    product.Category
+                    product.Category,
+                    product.Id
                 );
                 buyer.PurchasedProducts.Add(purchasedProduct);
                 product.Status = ProductStatus.Sold;
